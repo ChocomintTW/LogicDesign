@@ -1,9 +1,10 @@
+#ifndef QMC_H
+#define QMC_H
+
 #include <algorithm>
-#include <cmath>
-#include <iostream>
+#include <iterator>
 #include <set>
 #include <string>
-#include <utility>
 #include <vector>
 using namespace std;
 
@@ -170,32 +171,33 @@ void forall_possibility(vector<vector<string>> chart, set<int> mi, set<string> t
     }
 }
 
-int main() {
-    // vector<int> minterm = {1, 2, 5, 7, 9, 13, 15, 16, 17, 18, 20, 22, 24, 25, 27};
-    // vector<int> minterm = {0, 2, 3, 5, 7, 9, 11, 13, 14, 16, 18, 24, 26, 28, 30};
-    // vector<int> minterm = {0, 1, 2, 5, 6, 7};
-    
-    vector<int> minterm;
-    vector<int> dontcare;
+class Result {
+   public:
+    vector<string> essentials;
+    vector<set<string>> optionals;
 
-    cout << "Input minterm (end with -1): ";
-    while (true) {
-        int temp;
-        cin >> temp;
-        if (temp == -1)
-            break;
-        minterm.push_back(temp);
+    Result(vector<string> essentials, vector<set<string>> optionals) : essentials(essentials), optionals(optionals) {}
+
+    void print() {
+        cout << "Essential:\n";
+        for (string form : this->essentials) {
+            cout << to_expression(form) << "\n";
+        }
+
+        cout << "\nOptional:\n";
+        for (set<string> s : this->optionals) {
+            for (size_t i = 0; i < s.size(); i++) {
+                cout << to_expression(*next(s.begin(), i));
+                if (i != s.size() - 1) {
+                    cout << " + ";
+                }
+            }
+            cout << "\n";
+        }
     }
+};
 
-    cout << "Input don't care (end with -1): ";
-    while (true) {
-        int temp;
-        cin >> temp;
-        if (temp == -1)
-            break;
-        dontcare.push_back(temp);
-    }
-
+Result qmc_with_petrick_simplify(vector<int> minterm, vector<int> dontcare = vector<int>()) {
     vector<int> all_terms = minterm;
     all_terms.insert(all_terms.end(), dontcare.begin(), dontcare.end());
 
@@ -269,21 +271,7 @@ int main() {
         min.push_back(s);
     }
 
-    cout << "\nEssential:\n";
-    for (string form : essentials) {
-        cout << to_expression(form) << "\n";
-    }
-
-    cout << "\nOptional:\n";
-    for (set<string> s : min) {
-        for (size_t i = 0; i < s.size(); i++) {
-            cout << to_expression(*next(s.begin(), i));
-            if (i != s.size() - 1) {
-                cout << " + ";
-            }
-        }
-        cout << "\n";
-    }
-
-    return 0;
+    return Result(essentials, min);
 }
+
+#endif
