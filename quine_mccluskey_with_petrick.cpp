@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <bitset>
 #include <cmath>
 #include <iostream>
 #include <set>
@@ -7,24 +6,6 @@
 #include <utility>
 #include <vector>
 using namespace std;
-
-template <typename T>
-ostream& operator<<(ostream& os, const vector<T>& v) {
-    for (auto e : v) {
-        os << e << ", ";
-    }
-    os << "\n";
-    return os;
-}
-
-template <typename T>
-ostream& operator<<(ostream& os, const set<T>& s) {
-    for (auto e : s) {
-        os << e << ", ";
-    }
-    os << "\n";
-    return os;
-}
 
 int count_1(int x) {
     int count = 0;
